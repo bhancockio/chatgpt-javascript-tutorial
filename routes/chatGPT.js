@@ -3,11 +3,15 @@ const { UserType } = require("../constants/chatGPTRoles");
 const {
   postChatGPTMessage,
   addMessageToConveration,
+  isValidRequest,
 } = require("../utils/chatGPTUtil");
 const router = express.Router();
 
 // Create a new post
 router.post("/", async (req, res) => {
+  if (!isValidRequest(req.body)) {
+    return res.status(400).json({ error: "Invalid request" });
+  }
   const { message, conversation = [] } = req.body;
   console.log("Message", message);
   console.log("conversation", conversation);
@@ -17,20 +21,19 @@ router.post("/", async (req, res) => {
   addMessageToConveration(message, conversation, UserType.USER);
 
   // Send request
-  const response = await postChatGPTMessage(conversation);
-  console.log("response", response);
+  const chatGPTResponse = await postChatGPTMessage(conversation);
+  if (!chatGPTResponse) {
+    return res.status(500).json({ error: "Error with ChatGPT" });
+  }
+
+  const { content } = chatGPTResponse;
+  console.log("content", content);
 
   // Add request to our conversation
-  addMessageToConveration(message, conversation, UserType.ASSISTANT);
+  addMessageToConveration(content, conversation, UserType.ASSISTANT);
 
   // Return response
-  res.status(200).json({ message: conversation });
-});
-
-// Delete an existing post
-router.delete("/", (req, res) => {
-  // Code to delete an existing post from your database
-  res.send(`Post with ID ${req.params.id} deleted`);
+  return res.status(200).json({ message: conversation });
 });
 
 module.exports = router;

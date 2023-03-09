@@ -1,5 +1,6 @@
 require("dotenv").config();
 const axios = require("axios");
+const Yup = require("yup");
 const { UserType } = require("../constants/chatGPTRoles");
 
 const CHATGPT_END_POINT = "https://api.openai.com/v1/chat/completions";
@@ -16,29 +17,22 @@ const config = {
   },
 };
 
-const postChatGPTMessage = (conversation) => {
+const postChatGPTMessage = async (conversation) => {
   const messages = buildConversation(conversation);
   const chatGPTData = {
     model: CHATGPT_MODEL,
     messages: messages,
   };
 
-  return axios
-    .post(CHATGPT_END_POINT, chatGPTData, config)
-    .then((resp) => {
-      return resp.data;
-    })
-    .then((data) => {
-      return data?.choices[0]?.message;
-    })
-    .then((message) => {
-      console.log("Message from assistant", message);
-      return message;
-    })
-    .catch((error) => {
-      console.log(error);
-      return null;
-    });
+  try {
+    const resp = await axios.post(CHATGPT_END_POINT, chatGPTData, config);
+    const data = resp.data;
+    const message = data?.choices[0]?.message;
+    return message;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
 const buildConversation = (conversation) => {
@@ -52,7 +46,27 @@ const addMessageToConveration = (message, conversation, role) => {
   });
 };
 
+const conversationSchema = Yup.object().shape({
+  role: Yup.string().required("Role is required"),
+  content: Yup.string().required("Content is required"),
+});
+
+const requestSchema = Yup.object().shape({
+  message: Yup.string().required(),
+  conversation: Yup.array().of(conversationSchema).notRequired(),
+});
+
+const isValidRequest = (request) => {
+  try {
+    requestSchema.validateSync(request);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 module.exports = {
   postChatGPTMessage,
   addMessageToConveration,
+  isValidRequest,
 };
