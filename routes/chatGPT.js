@@ -13,8 +13,6 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Invalid request" });
   }
   const { message, conversation = [] } = req.body;
-  console.log("Message", message);
-  console.log("conversation", conversation);
   // Validate inputs
 
   // Add user message to our conversation

@@ -30,7 +30,8 @@ const postChatGPTMessage = async (conversation) => {
     const message = data?.choices[0]?.message;
     return message;
   } catch (error) {
-    console.log(error);
+    console.error("Error with ChatGPT API");
+    console.error(error);
     return null;
   }
 };
