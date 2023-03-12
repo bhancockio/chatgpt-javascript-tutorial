@@ -2,7 +2,6 @@
 require("dotenv").config();
 const axios = require("axios");
 const Yup = require("yup");
-const { UserType } = require("../constants/chatGPTRoles");
 
 // Define constants
 const CHATGPT_END_POINT = "https://api.openai.com/v1/chat/completions";

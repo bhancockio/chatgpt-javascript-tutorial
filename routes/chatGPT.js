@@ -1,5 +1,5 @@
 const express = require("express");
-const { UserType } = require("../constants/chatGPTRoles");
+const { USER_TYPES } = require("../constants/chatGPTRoles");
 const {
   postChatGPTMessage,
   addMessageToConveration,
@@ -21,12 +21,13 @@ router.post("/", async (req, res) => {
   const { message, context, conversation = [] } = req.body;
 
   // Create context message
-  const contextMessage = createMessage(context, UserType.SYSTEM);
+  const contextMessage = createMessage(context, USER_TYPES.SYSTEM);
 
   // Add user message to the conversation
-  addMessageToConveration(message, conversation, UserType.USER);
+  addMessageToConveration(message, conversation, USER_TYPES.USER);
 
   // Call postChatGPTMessage to get the response from the ChatGPT API
+  console.log("Generating response for: \n", message);
   const chatGPTResponse = await postChatGPTMessage(
     contextMessage,
     conversation
@@ -41,9 +42,10 @@ router.post("/", async (req, res) => {
   const { content } = chatGPTResponse;
 
   // Add the ChatGPT response to the conversation
-  addMessageToConveration(content, conversation, UserType.ASSISTANT);
+  addMessageToConveration(content, conversation, USER_TYPES.ASSISTANT);
 
   // Return the conversation as a JSON response
+  console.log("Updated conversation:\n", conversation);
   return res.status(200).json({ message: conversation });
 });
 
