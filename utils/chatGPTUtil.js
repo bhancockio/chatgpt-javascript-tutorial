@@ -14,6 +14,11 @@ const config = {
   },
 };
 
+// Function to build a conversation array
+const buildConversation = (contextMessage, conversation) => {
+  return [contextMessage].concat(conversation);
+};
+
 // Function to post a message to the ChatGPT API
 const postChatGPTMessage = async (contextMessage, conversation) => {
   const messages = buildConversation(contextMessage, conversation);
@@ -32,11 +37,6 @@ const postChatGPTMessage = async (contextMessage, conversation) => {
     console.error(error);
     return null;
   }
-};
-
-// Function to build a conversation array
-const buildConversation = (contextMessage, conversation) => {
-  return [contextMessage].concat(conversation);
 };
 
 const createMessage = (message, role) => {

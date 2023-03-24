@@ -1,3 +1,1 @@
-Goal
-
-- build a node
+YouTube Tutorial: https://youtu.be/uTi4nqvHblY

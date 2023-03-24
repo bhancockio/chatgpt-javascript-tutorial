@@ -40,8 +40,7 @@ router.post("/", async (req, res) => {
 
   // Get the content from the ChatGPT response
   const { content } = chatGPTResponse;
-
-  // Add the ChatGPT response to the conversation
+  //TODO: Add the ChatGPT response to the conversation
   addMessageToConveration(content, conversation, USER_TYPES.ASSISTANT);
 
   // Return the conversation as a JSON response
